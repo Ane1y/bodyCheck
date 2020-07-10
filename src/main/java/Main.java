@@ -1,31 +1,26 @@
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Main {
-    public static void main(String[] args) {
-        nu.pattern.OpenCV.loadLocally(); // Use in case loadShared() doesn't work
-//        Если не скачивала опенсиви на компуктер используй:
-//        System.loadLibrary(Core.NATIVE_LIBRARY_NAME)
-//        Если уже скачала и установила, пропиши как библиотеку проекта в свойствах
-//        и используй либо это
-//        nu.pattern.OpenCV.loadShared();
-//        либо это
-//        nu.pattern.OpenCV.loadLocally(); // Use in case loadShared() doesn't work
-//        с чем то точно должно заработать
-        String name = "190.jpg";
+    public static void main( String[] args ) throws IOException, InterruptedException {
+        ProcessBuilder builder = new ProcessBuilder("C:/Programming/darknet-master/build/darknet/x64/darknet.exe",
+                "detector", "test", "C:/Programming/darknet-master/cfg/coco.data",
+                "C:/Programming/darknet-master/cfg/yolov4.cfg",
+                "C:/Programming/darknet-master/build/darknet/x64/yolov4.weights", "C:/Programming/imgs/iam.jpg");
+        builder.environment().put( "DARKNET", "C:/Programming/darknet-master/share/" );
+        builder.redirectErrorStream( true );
+        Process process = builder.start();
 
-        File folder = new File("../imgs/");
-        File[] listOfFiles = folder.listFiles();
-try {
-    new HumanDetector(listOfFiles);
-    new HOGHumanDetector(listOfFiles);
-} catch (IOException e) {
-    e.printStackTrace();
+        try ( BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream())) ) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+        }
 
-}
+        process.waitFor();
     }
 }
