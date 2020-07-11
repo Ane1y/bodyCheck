@@ -22,3 +22,15 @@ buildNumber.properties
 *.zip
 *.tar.gz
 *.rar
+cascades/
+darknet/
+haarcascades_GPU/
+hogcascades/
+imgs/
+latentsvmdetector/
+lbpcascades/
+result/
+vec_files/
+*.list
+*.jpg
+*.json
