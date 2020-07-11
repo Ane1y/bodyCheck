@@ -17,18 +17,20 @@ public class HumanDetector {
 
         public HumanDetector(File... names) throws IOException {
             int i = 0;
-            for (var name : names) {
-                CascadeClassifier cascadeClassifier = new CascadeClassifier("cascades/haarcascade_fullbody.xml");
+            for (File name : names) {
+                CascadeClassifier cascadeClassifier = new CascadeClassifier("./hogcascades/hogcascades_pedestrians.xml");
                 Mat frame = new Mat();
                 Mat image = Imgcodecs.imread(name.getCanonicalPath()/*.getName()*/);
-                MatOfRect rect = new MatOfRect();
-                cascadeClassifier.detectMultiScale(image, rect);
+             //   Imgproc.cvtColor(image, image, Imgproc.COLOR_RGB2GRAY, 4);
+                MatOfRect detectedObj = new MatOfRect();
+                cascadeClassifier.detectMultiScale(image, detectedObj);
                 Scalar frameRect = new Scalar(255, 0, 0);
-                for (Rect dik : rect.toArray()) {
-                    Imgproc.rectangle(image, new Point(dik.x, dik.y), new Point(dik.x + dik.width, dik.y + dik.height), frameRect);
+                for (Rect object : detectedObj.toArray()) {
+                    Imgproc.rectangle(image, new Point(object.x, object.y),
+                                      new Point(object.x + object.width, object.y + object.height), frameRect);
                 }
-                System.out.println(rect.height());
-                Imgcodecs.imwrite("haar " + i + ".jpg", image);
+                System.out.println(detectedObj.height());
+                Imgcodecs.imwrite("eyes " + i + ".jpg", image);
                 i++;
             }
         }
