@@ -8,13 +8,15 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) {
         nu.pattern.OpenCV.loadLocally();
-        File folder = new File("../imgs/");
-        File[] listOfFiles = folder.listFiles();
+       /* File folder = new File("../imgs/");
+        File[] listOfFiles = folder.listFiles();*/
     //new HumanDetector(listOfFiles);
  //   new HOGHumanDetector(listOfFiles);
+        File img = new File("imgs/175.jpg");
+        HumanDetectorYOLOv4 hd = new HumanDetectorYOLOv4();
         try {
-            HumanDetectorYOLOv4 hd = new HumanDetectorYOLOv4(listOfFiles);
-        } catch(IOException e) {
+            hd.detectHuman(img);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
