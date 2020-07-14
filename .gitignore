@@ -30,6 +30,7 @@ imgs/
 latentsvmdetector/
 lbpcascades/
 result/
+data/
 vec_files/
 *.list
 *.jpg

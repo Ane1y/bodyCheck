@@ -12,6 +12,15 @@
         <java.version>12</java.version>
     </properties>
 
+    <plugin>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-maven-plugin</artifactId>
+        <version>0.0.4</version>
+        <configuration>
+            <mainClass>BodyCheckFront</mainClass>
+        </configuration>
+    </plugin>
+
 <dependencies>
     <!-- https://mvnrepository.com/artifact/org.openpnp/opencv -->
     <dependency>
@@ -20,12 +29,10 @@
         <version>4.3.0-0</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.openjfx/javafx -->
     <dependency>
         <groupId>org.openjfx</groupId>
-        <artifactId>javafx</artifactId>
-        <version>11</version>
-        <type>pom</type>
+        <artifactId>javafx-controls</artifactId>
+        <version>12.0.2</version>
     </dependency>
 
         <!--  Gson: Java to Json conversion -->
@@ -36,4 +43,6 @@
             <scope>compile</scope>
         </dependency>
 </dependencies>
+
+
 </project>
