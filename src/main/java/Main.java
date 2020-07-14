@@ -13,9 +13,10 @@ public class Main {
     //new HumanDetector(listOfFiles);
  //   new HOGHumanDetector(listOfFiles);
         File img = new File("imgs/175.jpg");
-        HumanDetectorYOLOv4 hd = new HumanDetectorYOLOv4();
         try {
-            hd.detectHuman(img);
+            HumanDetectorYOLOv4 hd = new HumanDetectorYOLOv4(img);
+            hd.detectHuman();
+            hd.detectBook();
         } catch (IOException e) {
             e.printStackTrace();
         }

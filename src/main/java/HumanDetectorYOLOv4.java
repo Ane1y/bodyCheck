@@ -11,8 +11,12 @@ import java.io.*;
 public class HumanDetectorYOLOv4 {
 
     private File resultFile = new File("./result.json");
+    private File image;
 
-    private void activateYOLOv4(File file) throws IOException {
+    private Frame[] resultObjects;
+
+    public HumanDetectorYOLOv4(File file) throws IOException {
+        image = file;
         ProcessBuilder builder = new ProcessBuilder("darknet/darknet.exe",
                 "detector", "test", "darknet/cfg/coco.data",
                 "darknet/cfg/yolov4.cfg",
@@ -31,6 +35,9 @@ public class HumanDetectorYOLOv4 {
         }
 
         jsonUtils();
+
+        Gson gson = new Gson();
+        resultObjects = gson.fromJson(new FileReader(resultFile.getCanonicalPath()), Frame[].class);
     }
 
     /**
@@ -62,31 +69,38 @@ public class HumanDetectorYOLOv4 {
         }
     }
 
-    public Rect detectHuman(File file) throws IOException {
-        activateYOLOv4(file);
-        Gson gson = new Gson();
-        Frame[] jsonObject = gson.fromJson(new FileReader(resultFile.getCanonicalPath()), Frame[].class);
+    /**
+     * @param name name of detected object
+     * @return first coincident object's top left point, width and height
+     */
+    private Rect detectObject(String name) {
         Rect frame = null;
         Objects person = null;
         try {
-            for(var obj : jsonObject[0].getObjects()) {
-                if(obj.getName().equals("person")) {
+            for(var obj : resultObjects[0].getObjects()) {
+                if(obj.getName().equals(name)) {
                     person = obj;
                     break;
-                 }
+                }
             }
             Relative_coordinates rc = person.getRelative_coordinates();
-            BufferedImage img = ImageIO.read(file);
+            BufferedImage img = ImageIO.read(image);
             frame = new Rect((int) ((rc.getCenter_x() - rc.getWidth() / 2) * img.getWidth()),
                     (int) ((rc.getCenter_y() - rc.getHeight() / 2) * img.getHeight()),
                     (int) (rc.getWidth() * img.getWidth()),
                     (int) (rc.getHeight() * img.getHeight())
             );
-            System.out.println(frame.toString());
         } catch(NullPointerException e) {
-            System.out.print("Человек не найден");
+            System.out.print(name + " не найден");
+        } catch(IOException e) {
+            System.out.println("Изображение не найдено");
         }
         return frame;
-
+    }
+    public Rect detectBook() {
+        return detectObject("book");
+    }
+    public Rect detectHuman() throws IOException {
+        return detectObject("person");
     }
 }
