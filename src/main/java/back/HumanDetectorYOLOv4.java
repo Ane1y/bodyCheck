@@ -1,8 +1,11 @@
+package back;
+
 import com.google.gson.Gson;
-import jsonParser.Frame;
-import jsonParser.Objects;
-import jsonParser.Relative_coordinates;
-import org.opencv.core.Rect;
+import jsonParser.darknet.*;
+import org.opencv.core.*;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -14,27 +17,31 @@ public class HumanDetectorYOLOv4 {
     private File image;
 
     private Frame[] resultObjects;
-double imgHumanHeight;
+    private double imgHumanHeight;
+
     public HumanDetectorYOLOv4(File file) throws IOException {
         image = file;
-
-        ProcessBuilder builder = new ProcessBuilder("C:/Programming/darknet-master/build/darknet/x64/darknet.exe",
+        ProcessBuilder builder = new ProcessBuilder("darknet/darknet.exe",
+                "detector", "test", "darknet/cfg/coco.data",
+                "darknet/cfg/yolov4.cfg",
+                "darknet/cfg/yolov4.weights", "-ext_output", "-dont_show", "-out", resultFile.getCanonicalPath(), file.getCanonicalPath());
+    /*    ProcessBuilder builder = new ProcessBuilder("C:/Programming/darknet-master/build/darknet/x64/darknet.exe",
                 "detector", "test", "C:/Programming/darknet-master/cfg/coco.data",
                 "C:/Programming/darknet-master/cfg/yolov4.cfg",
                 "C:/Programming/darknet-master/build/darknet/yolov4.weights", "-ext_output",
-                "-dont_show", "-out", "result.json", Main.path);
-         builder.redirectErrorStream(true);
+                "-dont_show", "-out", "result.json", Main.path);*/
+        builder.redirectErrorStream(true);
         Process process = builder.start();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
             String line;
             while ((line = br.readLine()) != null) {
                 System.out.println(line);
             }
-            builder.command(Main.path);
+            builder.command(file.getAbsolutePath());
             process.waitFor();
 
-        } catch(IOException | InterruptedException e) {
-          e.printStackTrace();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
 
         jsonUtils();
@@ -47,7 +54,8 @@ double imgHumanHeight;
 
     /**
      * handle output json file from darknet YOLOv4
-     *replaces the slash in the path with a double backslash
+     * replaces the slash in the path with a double backslash
+     *
      * @throws IOException
      */
     private void jsonUtils() throws IOException {
@@ -65,12 +73,11 @@ double imgHumanHeight;
             String newContent = oldContent.toString().replace("\\", "\\\\");
             writer = new FileWriter(fileToBeModified);
             writer.write(newContent);
-        }
-        finally {
-                assert reader != null;
-                reader.close();
-                assert writer != null;
-                writer.close();
+        } finally {
+            assert reader != null;
+            reader.close();
+            assert writer != null;
+            writer.close();
         }
     }
 
@@ -82,8 +89,8 @@ double imgHumanHeight;
         Rect frame = null;
         Objects person = null;
         try {
-            for(var obj : resultObjects[0].getObjects()) {
-                if(obj.getName().equals(name)) {
+            for (var obj : resultObjects[0].getObjects()) {
+                if (obj.getName().equals(name)) {
                     person = obj;
                     break;
                 }
@@ -94,38 +101,50 @@ double imgHumanHeight;
                     (int) ((rc.getCenter_y() - rc.getHeight() / 2) * img.getHeight()),
                     (int) (rc.getWidth() * img.getWidth()),
                     (int) (rc.getHeight() * img.getHeight()));
-            if(name=="book"){
+            if (name.equals("book")) {
                 //String command = "python /c start python C:/Users/Somn117/PycharmProjects/DetectRect/q.py";
-               // Process p = Runtime.getRuntime().exec(command);
+                // Process p = Runtime.getRuntime().exec(command);
                 String prg = "import sys";
-                BufferedWriter out = new BufferedWriter(new FileWriter("C:/Programming/DetectRect/q.py"));
+                BufferedWriter out = new BufferedWriter(new FileWriter(Detector.mainFolder + "/DetectRect/q.py"));
                 out.write(prg);
                 out.close();
                 Process p = Runtime.getRuntime().exec("python C:/Programming/DetectRect/q.py");
                 BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
                 String ret = in.readLine();
-                System.out.println("value is : "+ret);
+                System.out.println("value is : " + ret);
             }
-            if (name=="person"){
-                imgHumanHeight=frame.height;
-                 File result = new File("C:/Programming/result/result.txt");
-                 HeightCalculate hc= new HeightCalculate(result,imgHumanHeight);
-                 System.out.print(hc.realHumanHeight);
+            if (name.equals("person")) {
+                imgHumanHeight = frame.height;
+                File result = new File(Detector.mainFolder + "/result/result.txt");
+                HeightCalculate hc = new HeightCalculate(result, imgHumanHeight);
+                System.out.print(hc.getRealHumanHeight());
             }
-        } catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             System.out.print(name + " не найден");
-        } catch(IOException e) {
+        } catch (IOException e) {
             System.out.println("Изображение не найдено");
         }
         return frame;
     }
-    public Rect detectBook() {
-       // var book = detectObject("book");
 
-            return(detectObject("book"));
+    public Rect detectBook() {
+        return (detectObject("book"));
 
     }
+
     public Rect detectHuman() throws IOException {
         return detectObject("person");
+    }
+
+    public Rect detectHumanHead() throws IOException {
+        int i = 0;
+        CascadeClassifier cascadeClassifier = new CascadeClassifier("./cascades/haarcascade_frontalface_default.xml");
+        Mat frame = new Mat();
+        Mat imageMat = Imgcodecs.imread(image.getCanonicalPath()/*.getName()*/);
+        MatOfRect detectedObj = new MatOfRect();
+        cascadeClassifier.detectMultiScale(imageMat, detectedObj);
+        Scalar frameRect = new Scalar(255, 0, 0);
+        var objects = detectedObj.toArray();
+        return objects[0];
     }
 }
