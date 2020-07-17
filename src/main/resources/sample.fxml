@@ -1,0 +1,44 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.*?>
+
+
+<?import javafx.scene.layout.HBox?>
+<GridPane fx:controller="Controller" style="-fx-background-color: beige;"
+          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
+    <padding><Insets top="50" right="0" bottom="10" left="30"/></padding>
+
+    <fx:define>
+        <Image fx:id="btnImage" url="https://cdn3.iconfinder.com/data/icons/ui-essential-elements-dark-circle-buttons/110/Open-512.png" />
+        <Image fx:id="btnImage2" url="https://image.flaticon.com/icons/png/512/0/304.png" />
+    </fx:define>
+
+
+    <HBox spacing="10" alignment="center"
+          GridPane.columnIndex="0" GridPane.rowIndex="0">
+        <ImageView fx:id="img"/>
+    </HBox>
+
+    <Button style="-fx-background-color: lightgrey" onAction="#click" fx:id="openbtn" GridPane.columnSpan="3" layoutX="180" layoutY="400" GridPane.columnIndex="0" GridPane.rowIndex="1"
+    >
+
+        <graphic>
+            <ImageView image="$btnImage" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" />
+        </graphic>
+
+    </Button>
+
+    <Button style="-fx-background-color: lightgrey" onAction="#gonext" fx:id="gobtn"  layoutX="240" layoutY="440" GridPane.columnIndex="0" GridPane.rowIndex="2">
+
+        <graphic>
+            <ImageView image="$btnImage2" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
+        </graphic>
+
+    </Button>
+
+</GridPane>
