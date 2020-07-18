@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Line;
@@ -25,7 +26,6 @@ public class Draw extends Application {
 
     private int lineCounter = -1;
     private PictureInfo info;
-    private Point endPoint = new Point();
     private Point scale = new Point();
     private Measuring.partsOfBody[] parts = Measuring.partsOfBody.values();
     private int partsCounter = 0;
@@ -44,21 +44,17 @@ public class Draw extends Application {
         pane.setBackground(new Background(bgImage));
 
         pane.setOnMousePressed(e -> {
-            recordInfo();
-
             currentLine = new Line(e.getX(), e.getY(), e.getX(), e.getY());
             pane.getChildren().add(currentLine);
 
             lineCounter++;
+            partsCounter++;
 
         });
 
         pane.setOnMouseDragged(e -> {
             currentLine.setEndX(e.getX());
             currentLine.setEndY(e.getY());
-
-            endPoint.setX(e.getX());
-            endPoint.setY(e.getY());
         });
 
         pane.setOnMouseReleased(e -> {
@@ -69,7 +65,7 @@ public class Draw extends Application {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.CANCEL){
                 pane.getChildren().remove(currentLine);
-            } else {
+            } else if(result.get() == ButtonType.OK){
                 recordInfo();
             }
 
@@ -89,9 +85,19 @@ public class Draw extends Application {
             @Override public void handle(ActionEvent e) {
                 button.setStyle("-fx-background-color: black");
 
-                recordInfo();
                 Detector detector = new Detector(info);
-                System.out.println("hello");
+
+                Label heightLabel = new Label("Height");
+                heightLabel.setLayoutY(0);
+                heightLabel.setLayoutX(230);
+
+                Label[] labels = new Label[Measuring.partsOfBody.values().length];
+                int i = 0;
+                for(var label : labels) {
+                    label.setLayoutY(info.getMeasuring(i).getBeginPoint().getY());
+                    label.setLayoutX(40);
+                    pane.getChildren().add(label);
+                }
 
             }
         });
@@ -106,9 +112,12 @@ public class Draw extends Application {
 
     private void recordInfo() {
         if(lineCounter >= 0) {
+            if(partsCounter >= 3 || partsCounter < 0) {
+                partsCounter = 0;
+            }
             Measuring meas = new Measuring(parts[partsCounter],
-                    new Point(currentLine.getStartX(), currentLine.getStartY()), endPoint);
-            partsCounter++;
+                    new Point(currentLine.getStartX(), currentLine.getStartY()),
+                    new Point(currentLine.getEndX(), currentLine.getEndY()));
             if(lineCounter == 0) {
                 String path = imgfon.getUrl();
                 info = new PictureInfo(path.replace("file:/", ""), meas);
@@ -116,9 +125,7 @@ public class Draw extends Application {
             } else {
                 info.getMeasuring().add(meas);
             }
-            if(partsCounter >= 3) {
-                partsCounter = 0;
-            }
+
         }
     }
 

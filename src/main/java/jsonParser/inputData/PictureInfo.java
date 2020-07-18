@@ -46,4 +46,5 @@ public class PictureInfo {
             m.setScaledMeasuring(scale);
         }
     }
+
 }

@@ -41,7 +41,13 @@ public class Measuring {
     }
 
     public void setScaledMeasuring(Point scale) {
-        endPoint.setScaledPoint(scale);
         beginPoint.setScaledPoint(scale);
+        endPoint.setScaledPoint(scale);
+
+    }
+
+    @Override
+    public String toString() {
+        return (partOfBody.toString() +  ", begin point " + beginPoint.toString() + ", end point " + endPoint.toString());
     }
 }

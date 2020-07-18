@@ -32,4 +32,9 @@ public class Point {
         x *= scale.getX();
         y *= scale.getY();
     }
+
+    @Override
+    public String toString() {
+        return("(" + x + ", " + y + ")");
+    }
 }
