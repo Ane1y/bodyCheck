@@ -5,7 +5,7 @@ import java.util.LinkedList;
 public class PictureInfo {
     private String filename;
     private LinkedList<Measuring> measuring;
-    private Point scale = null;
+    private double scale;
 
     public PictureInfo(String filename, Measuring measuring) {
         this.filename = filename;
@@ -33,15 +33,15 @@ public class PictureInfo {
         return measuring.get(index);
     }
 
-    public Point getScale() {
+    public double getScale() {
         return scale;
     }
 
-    public void setScale(Point scale) {
+    public void setScale(double scale) {
         this.scale = scale;
     }
 
-    public void setScaledPoint(Point scale) {
+    public void setScaledPoint(double scale) {
         for(var m : measuring) {
             m.setScaledMeasuring(scale);
         }

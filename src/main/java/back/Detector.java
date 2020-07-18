@@ -23,7 +23,7 @@ public class Detector {
             System.out.println(i.toString());
 
         }
-        info.setScaledPoint(info.getScale()); //этой строкой растягиваешь координаты, если что то криво выходит пиши мне
+        info.setScaledPoint((info.getScale() + 1)  * 2); //этой строкой растягиваешь координаты, если что то криво выходит пиши мне
         double[] distances = new double[info.getMeasuring().size()];
         int j = 0;
         for(var i : info.getMeasuring()) {

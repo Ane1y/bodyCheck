@@ -28,9 +28,9 @@ public class Point {
         this.y = y;
     }
 
-    void setScaledPoint(Point scale) {
-        x *= scale.getX();
-        y *= scale.getY();
+    void setScaledPoint(double scale) {
+        x *= scale;
+        y *= scale;
     }
 
     @Override

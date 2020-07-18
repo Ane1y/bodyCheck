@@ -40,7 +40,7 @@ public class Measuring {
         this.endPoint = endPoint;
     }
 
-    public void setScaledMeasuring(Point scale) {
+    public void setScaledMeasuring(double scale) {
         beginPoint.setScaledPoint(scale);
         endPoint.setScaledPoint(scale);
 

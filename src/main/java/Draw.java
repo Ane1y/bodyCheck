@@ -10,12 +10,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 import jsonParser.inputData.*;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Optional;
 
 
@@ -26,7 +25,7 @@ public class Draw extends Application {
 
     private int lineCounter = -1;
     private PictureInfo info;
-    private Point scale = new Point();
+    private double scale;
     private Measuring.partsOfBody[] parts = Measuring.partsOfBody.values();
     private int partsCounter = 0;
 
@@ -45,6 +44,8 @@ public class Draw extends Application {
 
         pane.setOnMousePressed(e -> {
             currentLine = new Line(e.getX(), e.getY(), e.getX(), e.getY());
+            currentLine.setStroke(Color.RED);
+
             pane.getChildren().add(currentLine);
 
             lineCounter++;
@@ -69,16 +70,31 @@ public class Draw extends Application {
                 recordInfo();
             }
 
-
-
         });
+        double imgH = imgfon.getHeight();
+        double imgW = imgfon.getWidth();
+        int imgsize = 0;
 
-        scale = new Point(imgfon.getHeight() / 640, imgfon.getWidth() / 480);
+        while (imgH > 1024 || imgW > 1024){
+            imgH = imgH / 2;
+            imgW = imgW / 2;
+            imgsize++; //это чтобы запомнить на сколько потом умножать
+        }
+        scale = imgsize;
+        //scale = new Point(imgH / 640, imgW / 480);
+
+        Scene scene = new Scene(pane, imgW, imgH);
+
+        final double centerforlabel = imgW / 2;
+        final double placeforbuttonx = imgW - 100;
+        final double placeforbuttony = imgH - 50;
+
+       /* scale = new Point(imgfon.getHeight() / 640, imgfon.getWidth() / 480);
         Scene scene = new Scene(pane, imgfon.getWidth()/scale.getY(), imgfon.getHeight()/scale.getX());
-
+*/
         Button button = new Button("Your size");
-        button.setLayoutX(400);
-        button.setLayoutY(600);
+        button.setLayoutX(placeforbuttonx);
+        button.setLayoutY(placeforbuttony);
         button.setStyle("-fx-background-color: lightgrey");
 
         button.setOnAction(new EventHandler<ActionEvent>() {
